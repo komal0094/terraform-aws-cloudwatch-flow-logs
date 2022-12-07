@@ -1,34 +1,37 @@
+provider "aws" {
+  region = var.region
+}
 data "aws_region" "default" {}
 
 module "log_group_label" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.3.1"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.25.0"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
   stage      = "${var.stage}"
   delimiter  = "${var.delimiter}"
-  attributes = "${compact(concat(var.attributes, list("log")))}"
+  attributes = "${compact(concat(var.attributes, tolist(["log"])))}"
   tags       = "${var.tags}"
   enabled    = "${var.enabled}"
 }
 
 module "vpc_label" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.3.1"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.25.0"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
   stage      = "${var.stage}"
   delimiter  = "${var.delimiter}"
-  attributes = "${compact(concat(var.attributes, list("vpc")))}"
+  attributes = "${compact(concat(var.attributes, tolist(["vpc"])))}"
   tags       = "${var.tags}"
   enabled    = "${var.enabled}"
 }
 
 module "subnet_label" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.3.1"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.25.0"
   namespace  = "${var.namespace}"
   name       = "${var.name}"
   stage      = "${var.stage}"
   delimiter  = "${var.delimiter}"
-  attributes = "${compact(concat(var.attributes, list("subnets")))}"
+  attributes = "${compact(concat(var.attributes, tolist(["subnets"])))}"
   tags       = "${var.tags}"
   enabled    = "${var.enabled}"
 }
@@ -42,24 +45,24 @@ resource "aws_cloudwatch_log_group" "default" {
 
 resource "aws_flow_log" "vpc" {
   count           = "${var.enabled == "true" ? 1 : 0}"
-  log_destination = "${aws_cloudwatch_log_group.default.arn}"
-  iam_role_arn    = "${aws_iam_role.log.arn}"
+  log_destination = "${aws_cloudwatch_log_group.default[count.index].arn}"
+  iam_role_arn    = "${aws_iam_role.log[count.index].arn}"
   vpc_id          = "${var.vpc_id}"
   traffic_type    = "${var.traffic_type}"
 }
 
 resource "aws_flow_log" "subnets" {
   count           = "${var.enabled == "true" ? length(compact(var.subnet_ids)) : 0}"
-  log_destination = "${aws_cloudwatch_log_group.default.arn}"
-  iam_role_arn    = "${aws_iam_role.log.arn}"
+  log_destination = "${aws_cloudwatch_log_group.default[count.index].arn}"
+  iam_role_arn    = "${aws_iam_role.log[count.index].arn}"
   subnet_id       = "${element(compact(var.subnet_ids), count.index)}"
   traffic_type    = "${var.traffic_type}"
 }
 
 resource "aws_flow_log" "eni" {
   count           = "${var.enabled == "true" ? length(compact(var.eni_ids)) : 0}"
-  log_destination = "${aws_cloudwatch_log_group.default.arn}"
-  iam_role_arn    = "${aws_iam_role.log.arn}"
+  log_destination = "${aws_cloudwatch_log_group.default[count.index].arn}"
+  iam_role_arn    = "${aws_iam_role.log[count.index].arn}"
   subnet_id       = "${element(compact(var.eni_ids), count.index)}"
   traffic_type    = "${var.traffic_type}"
 }

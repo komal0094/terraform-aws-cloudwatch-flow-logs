@@ -1,39 +1,41 @@
 variable "name" {
-  default     = ""
+  default     = "   "
   description = "Name  (e.g. `bastion` or `db`)"
 }
 
 variable "namespace" {
   description = "Namespace (e.g. `cp` or `cloudposse`)"
-  type        = "string"
+  type        = string
+  default = "cp"
 }
 
 variable "stage" {
   description = "Stage (e.g. `prod`, `dev`, `staging`)"
-  type        = "string"
+  type        = string
+  default = "dev"
 }
 
 variable "delimiter" {
-  type        = "string"
+  type        = string
   default     = "-"
   description = "Delimiter to be used between `name`, `namespace`, `stage`, etc."
 }
 
 variable "attributes" {
-  type        = "list"
+  type        = list(string)
   default     = []
   description = "Additional attributes (e.g. `policy` or `role`)"
 }
 
 variable "tags" {
-  type        = "map"
+  type        = map(string)
   default     = {}
   description = "Additional tags (e.g. map(`BusinessUnit`,`XYZ`)"
 }
 
 variable "region" {
   description = "AWS region"
-  default     = ""
+  default     = "us-east-1"
 }
 
 variable "retention_in_days" {
@@ -48,17 +50,18 @@ variable "traffic_type" {
 
 variable "vpc_id" {
   description = "ID of VPC"
+  default = "vpc-0e1388574572447bf"
 }
 
 variable "subnet_ids" {
   description = "IDs of subnets"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "eni_ids" {
   description = "IDs of ENIs"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
