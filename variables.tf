@@ -6,13 +6,13 @@ variable "name" {
 variable "namespace" {
   description = "Namespace (e.g. `cp` or `cloudposse`)"
   type        = string
-  default = "cp"
+  
 }
 
 variable "stage" {
   description = "Stage (e.g. `prod`, `dev`, `staging`)"
   type        = string
-  default = "dev"
+
 }
 
 variable "delimiter" {
@@ -35,7 +35,7 @@ variable "tags" {
 
 variable "region" {
   description = "AWS region"
-  default     = "us-east-1"
+  
 }
 
 variable "retention_in_days" {
@@ -50,7 +50,7 @@ variable "traffic_type" {
 
 variable "vpc_id" {
   description = "ID of VPC"
-  default = "vpc-0e1388574572447bf"
+  
 }
 
 variable "subnet_ids" {
